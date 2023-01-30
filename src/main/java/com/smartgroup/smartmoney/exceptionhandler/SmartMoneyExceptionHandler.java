@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -32,8 +33,9 @@ public class SmartMoneyExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
-		String userMessage = messageSource.getMessage("invalid.message", null, Locale.getDefault());
-		String devMessage = ex.getCause().toString();
+		String userMessage = this.messageSource.getMessage("invalid.message", null, Locale.getDefault());
+		String devMessage = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
+//		String devMessage = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
 		
 		List<Error> errors = Arrays.asList(new Error(userMessage, devMessage));
 		

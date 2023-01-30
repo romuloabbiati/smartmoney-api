@@ -18,11 +18,21 @@ public class PersonService {
 
 	@Transactional
 	public Person update(Long id, Person person) {
-		Person savedPerson = personRepository.findById(id)
-				.orElseThrow(() -> new EmptyResultDataAccessException(1));
-		
+		Person savedPerson = findPersonById(id);
 		BeanUtils.copyProperties(person, savedPerson, "id");
 		return savedPerson = personRepository.save(savedPerson);
+	}
+	
+	@Transactional
+	public void updateActiveAttribute(Long id, Boolean active) {
+		Person savedPerson = findPersonById(id);
+		savedPerson.setActive(active);
+		personRepository.save(savedPerson);
+	}
+	
+	private Person findPersonById(Long id) {
+		return personRepository.findById(id)
+				.orElseThrow(() -> new EmptyResultDataAccessException(1));
 	}
 	
 }

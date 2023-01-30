@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartgroup.smartmoney.event.ResourceCreatedEvent;
@@ -59,6 +60,12 @@ public class PersonResource {
 	public ResponseEntity<Person> update(@PathVariable Long id, @Valid @RequestBody Person person) {
 		Person savedPerson = personService.update(id, person);
 		return ResponseEntity.ok(savedPerson);
+	}
+	
+	@PutMapping(path = "/{id}/active")
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void updateActiveAttribute(@PathVariable Long id, @RequestBody Boolean active) {
+		personService.updateActiveAttribute(id, active);
 	}
 	
 }
