@@ -8,7 +8,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "person")
@@ -28,6 +31,12 @@ public class Person {
 	private Boolean active;
 
 	public Person() {
+	}
+	
+	@JsonIgnore
+	@Transient
+	public Boolean isInactive() {
+		return !this.active;
 	}
 
 	public Long getId() {
