@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -24,8 +25,11 @@ public class Bill {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@NotNull
 	private String description;
 	
+	@NotNull
 	@Column(name = "due_date")
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dueDate;
@@ -34,17 +38,21 @@ public class Bill {
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate paymentDate;
 	
+	@NotNull
 	private BigDecimal value;
 	
 	private String notes;
 	
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private BillType type;
 	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "person_id")
 	private Person person;
