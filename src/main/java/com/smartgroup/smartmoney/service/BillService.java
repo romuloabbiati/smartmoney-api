@@ -24,7 +24,7 @@ public class BillService {
 	@Transactional
 	public Bill save(Bill bill) {
 		Optional<Person> person = personRepository.findById(bill.getPerson().getId());
-		if(person == null || person.get().isInactive()) {
+		if(!person.isPresent() || person.get().isInactive()) {
 			throw new PersonDoesNotExistOrInactiveException();
 		}
 		return billRepository.save(bill);
