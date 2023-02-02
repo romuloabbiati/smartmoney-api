@@ -25,6 +25,7 @@ import com.smartgroup.smartmoney.event.ResourceCreatedEvent;
 import com.smartgroup.smartmoney.exceptionhandler.SmartMoneyExceptionHandler.Error;
 import com.smartgroup.smartmoney.model.Bill;
 import com.smartgroup.smartmoney.repository.BillRepository;
+import com.smartgroup.smartmoney.repository.filter.BillFilter;
 import com.smartgroup.smartmoney.service.BillService;
 import com.smartgroup.smartmoney.service.PersonDoesNotExistOrInactiveException;
 
@@ -45,8 +46,8 @@ public class BillResource {
 	private MessageSource messageSource;
 	
 	@GetMapping
-	public List<Bill> findAll() {
-		return billRepository.findAll();
+	public List<Bill> findAll(BillFilter billFilter) {
+		return billRepository.filter(billFilter);
 	}
 	
 	@GetMapping(path = "/{id}")
