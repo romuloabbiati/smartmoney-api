@@ -11,6 +11,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.ObjectUtils;
 
 import com.smartgroup.smartmoney.model.Bill;
@@ -23,7 +26,7 @@ public class BillRepositoryImpl implements BillRepositoryQuery {
 	private EntityManager manager;
 	
 	@Override
-	public List<Bill> filter(BillFilter billFilter) {
+	public Page<Bill> filter(BillFilter billFilter, Pageable pageable) {
 		CriteriaBuilder builder = manager.getCriteriaBuilder();
 		 CriteriaQuery<Bill> criteria = builder.createQuery(Bill.class);
 		 Root<Bill> root = criteria.from(Bill.class);
@@ -33,8 +36,14 @@ public class BillRepositoryImpl implements BillRepositoryQuery {
 		 criteria.where(predicates);
 		 
 		 TypedQuery<Bill> query = manager.createQuery(criteria);
-		return query.getResultList();
+		 
+		 addPaginationRestrictions(query, pageable);
+		 
+		return new PageImpl<>(query.getResultList(), pageable, total(billFilter));
 	}
+
+
+
 
 	private Predicate[] createRestrictions(BillFilter billFilter, CriteriaBuilder builder, 
 			Root<Bill> root) {
@@ -59,4 +68,25 @@ public class BillRepositoryImpl implements BillRepositoryQuery {
 		return predicates.toArray(new Predicate[predicates.size()]);
 	}
 
+	private void addPaginationRestrictions(TypedQuery<Bill> query, Pageable pageable) {
+		int currentPage = pageable.getPageNumber();
+		int totalBillsPerPage = pageable.getPageSize();
+		int firstBillOfPage = currentPage * totalBillsPerPage;
+		
+		query.setFirstResult(firstBillOfPage);
+		query.setMaxResults(totalBillsPerPage);
+	}
+	
+	private Long total(BillFilter billFilter) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+		Root<Bill> root = criteria.from(Bill.class);
+		
+		Predicate[] predicates = createRestrictions(billFilter, builder, root);
+		criteria.where(predicates);
+		
+		criteria.select(builder.count(root));
+		return manager.createQuery(criteria).getSingleResult();
+	}
+	
 }
