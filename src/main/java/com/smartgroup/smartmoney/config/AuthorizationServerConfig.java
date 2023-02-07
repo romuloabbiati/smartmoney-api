@@ -33,8 +33,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	            .withClient("angular")
 	            .secret(passwordEncoder.encode("@ngul@r0")) // @ngul@r0
 	            .scopes("read", "write")
-	            .authorizedGrantTypes("password")
-	            .accessTokenValiditySeconds(1800)
+	            .authorizedGrantTypes("password", "refresh_token")
+	            .accessTokenValiditySeconds(20)
+	            .refreshTokenValiditySeconds(3600 * 24)
 	        .and()
 	            .withClient("mobile")
 	            .secret(passwordEncoder.encode("m0b1l30")) // m0b1l30
